@@ -10,6 +10,11 @@ function validateObjectId(id, res){
     }
 }
 
+function handleNotFoundError(){
+
+}
+
 export{
-    validateObjectId
+    validateObjectId,
+    handleNotFoundError
 }
