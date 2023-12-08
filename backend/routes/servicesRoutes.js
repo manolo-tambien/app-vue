@@ -3,21 +3,19 @@ import {
     createService,
     getServices,
     getServiceById,
-    updateService
+    updateService,
+    deleteService
 } from "../controllers/servicesController.js"
 
 const router = express.Router()
 
-// Ruta para crear un nuevo servicio
-router.post('/', createService)
+router.route('/')
+    .post(createService)
+    .get(getServices)
 
-// Definicion de ruta
-router.get('/', getServices)
-
-// Se define ruta para filtrar por Id de servicio
-router.get('/:id', getServiceById)
-
-// Actualiza el valor de un servicio que ya existe
-router.put('/:id',updateService)
+router.route('/:id')
+    .get(getServiceById)
+    .put(updateService)
+    .delete(deleteService)
 
 export default router

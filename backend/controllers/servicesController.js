@@ -1,6 +1,9 @@
-import mongoose from "mongoose"
+
 import Services from "../models/Service.js"
-import { validateObjectId } from "../utils/index.js";
+import {
+    validateObjectId,
+    handleNotFoundError
+} from "../utils/index.js";
 
 const createService = async (req, res) => {
     if (Object.values(req.body).includes('')) {
@@ -24,37 +27,68 @@ const createService = async (req, res) => {
     }
 }
 
-const getServices = (req, res) => {
-    res.json('Todos los servicios')
+const getServices = async (req, res) => {
+
+    try {
+        const service = await Services.find()
+        res.json(service)
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 const getServiceById = async (req, res) => {
     const { id } = req.params;
 
-    if(validateObjectId(id, res)) return
+    if (validateObjectId(id, res)) return
 
     // Valida que exista 
-    const service  = await Services.findById(id)
+    const service = await Services.findById(id)
     if (!service) {
-        const error = new Error('El Id no existe')
-        return res.status(404).json({
-            msg: error.message
-        })
+        return handleNotFoundError("El servicio no existe", res)
     }
 
     // Muestra el servicio
     res.json(service)
 }
 
-const updateService = async (req, res) =>{
-    const {id} = req.params
-    
-    if(validateObjectId(id, res)) return
+const updateService = async (req, res) => {
+    const { id } = req.params
+
+    if (validateObjectId(id, res)) return
+
+    const service = await Services.findById(id)
+    if (!service) {
+        return handleNotFoundError("El servicio no existe", res)
+    }
+}
+
+const deleteService = async (req, res) => {
+
+    const { id } = req.params
+
+    if (validateObjectId(id, res)) return
+
+    // Valida que exista 
+    const service = await Services.findById(id)
+    if (!service) {
+        return handleNotFoundError("El servicio no existe", res)
+    }
+
+    try {
+        await service.deleteOne()
+        res.json({
+            msg: 'El servicio se eliminó correctamente'
+        })
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 export {
     createService,
     getServices,
     getServiceById,
-    updateService
+    updateService,
+    deleteService
 }

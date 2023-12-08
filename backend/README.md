@@ -1,2 +1,2 @@
 ## Nueva App
-Inicio
+Inicio de App con vue
